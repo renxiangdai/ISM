@@ -103,6 +103,10 @@ def run_inference(segmentor_model, output_dir, cad_path, rgb_path, depth_path, c
     elif segmentor_model == "fastsam":
         with initialize(version_base=None, config_path="configs/model"):
             cfg.model = compose(config_name='ISM_fastsam.yaml')
+    elif segmentor_model == "sam2":
+        with initialize(version_base=None, config_path="configs/model"):
+            cfg.model = compose(config_name='ISM_sam2.yaml')
+        cfg.model.segmentor_model.stability_score_thresh = stability_score_thresh
     else:
         raise ValueError("The segmentor_model {} is not supported now!".format(segmentor_model))
 
@@ -118,7 +122,7 @@ def run_inference(segmentor_model, output_dir, cad_path, rgb_path, depth_path, c
             model.segmentor_model.predictor.model.to(device)
         )
     else:
-        model.segmentor_model.model.setup_model(device=device, verbose=True)
+        model.segmentor_model.model = model.segmentor_model.model.to(device)
     logging.info(f"Moving models to {device} done!")
         
     
@@ -212,7 +216,7 @@ def run_inference(segmentor_model, output_dir, cad_path, rgb_path, depth_path, c
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--segmentor_model", default='sam', help="The segmentor model in ISM")
+    parser.add_argument("--segmentor_model", default='sam2', help="The segmentor model in ISM")
     parser.add_argument("--output_dir", default="/data/rxdai/Instance_Segmentation_Model/ceshi/outputs", help="Path to root directory of the output")
     parser.add_argument("--cad_path", default="/data/rxdai/Instance_Segmentation_Model/ceshi/obj_000005.ply", help="Path to CAD(mm)")
     parser.add_argument("--rgb_path", default="/data/rxdai/Instance_Segmentation_Model/ceshi/rgb.png", help="Path to RGB image")

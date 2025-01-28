@@ -80,7 +80,7 @@ model:
           dim: 256
           kernel_size: 7
           padding: 3
-          layer_scale_init_value: 1e-6
+          layer_scale_init_value: !!float 1e-6
           use_dwconv: True  # depth-wise convs
         num_layers: 2
 
